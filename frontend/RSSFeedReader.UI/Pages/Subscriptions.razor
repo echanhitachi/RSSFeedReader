@@ -26,7 +26,12 @@
 @code {
     private string _newUrl = string.Empty;
     private string? _statusMessage;
-    private readonly List<string> _subscriptions = new();
+    private List<string> _subscriptions = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _subscriptions = await SubscriptionApiClient.GetSubscriptionsAsync();
+    }
 
     private async Task AddSubscriptionAsync()
     {

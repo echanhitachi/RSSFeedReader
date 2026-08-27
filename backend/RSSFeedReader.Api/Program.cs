@@ -42,6 +42,10 @@ app.MapPost("/api/subscriptions", (AddSubscriptionRequest request, ISubscription
 })
 .WithName("AddSubscription");
 
+app.MapGet("/api/subscriptions", (ISubscriptionService subscriptions) =>
+    Results.Ok(subscriptions.GetAll().Select(s => s.Url)))
+.WithName("GetSubscriptions");
+
 app.Run();
 
 record AddSubscriptionRequest(string Url);

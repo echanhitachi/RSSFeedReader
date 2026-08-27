@@ -64,10 +64,10 @@ description: "Task list template for feature implementation"
 
 **Independent Test**: Load the app and confirm the subscription list area renders correctly whether empty or populated.
 
-- [ ] T017 [P] [US2] Write unit tests for `InMemorySubscriptionService.GetAll` in `backend.Tests/RSSFeedReader.Api.Tests/SubscriptionServiceTests.cs` (returns empty collection initially, returns entries in insertion order after adds)
-- [ ] T018 [US2] Implement `GET /api/subscriptions` endpoint in `backend/RSSFeedReader.Api/Program.cs` per contracts/subscriptions-api.md
-- [ ] T019 [US2] Implement `GetSubscriptionsAsync` in `frontend/RSSFeedReader.UI/Services/SubscriptionApiClient.cs` to call the GET endpoint
-- [ ] T020 [US2] Load and render the subscription list in `Subscriptions.razor` on `OnInitializedAsync`, showing an empty state with no errors when there are no subscriptions
+- [X] T017 [P] [US2] Write unit tests for `InMemorySubscriptionService.GetAll` in `backend.Tests/RSSFeedReader.Api.Tests/SubscriptionServiceTests.cs` (returns empty collection initially, returns entries in insertion order after adds)
+- [X] T018 [US2] Implement `GET /api/subscriptions` endpoint in `backend/RSSFeedReader.Api/Program.cs` per contracts/subscriptions-api.md
+- [X] T019 [US2] Implement `GetSubscriptionsAsync` in `frontend/RSSFeedReader.UI/Services/SubscriptionApiClient.cs` to call the GET endpoint
+- [X] T020 [US2] Load and render the subscription list in `Subscriptions.razor` on `OnInitializedAsync`, showing an empty state with no errors when there are no subscriptions
 
 **Checkpoint**: The list reliably reflects current state on load and after adds. User Stories 1 and 2 together deliver the full MVP.
 
@@ -75,9 +75,9 @@ description: "Task list template for feature implementation"
 
 **Purpose**: Final validation across both user stories
 
-- [ ] T021 [P] Run `dotnet test backend.Tests/RSSFeedReader.Api.Tests` and confirm all tests pass
-- [ ] T022 [P] Verify no ambiguous routes: `dotnet clean` + `dotnet build` on `frontend/RSSFeedReader.UI` and check console output
-- [ ] T023 Execute all validation scenarios in [quickstart.md](./quickstart.md) manually in the browser, including the 20-subscription volume check (SC-003) and duplicate-URL check (FR-007)
+- [X] T021 [P] Run `dotnet test backend.Tests/RSSFeedReader.Api.Tests` and confirm all tests pass
+- [X] T022 [P] Verify no ambiguous routes: `dotnet clean` + `dotnet build` on `frontend/RSSFeedReader.UI` and check console output
+- [X] T023 Execute all validation scenarios in [quickstart.md](./quickstart.md) manually in the browser, including the 20-subscription volume check (SC-003) and duplicate-URL check (FR-007)
 
 ## Dependencies & Execution Order
 

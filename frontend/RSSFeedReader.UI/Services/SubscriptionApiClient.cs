@@ -9,4 +9,10 @@ public class SubscriptionApiClient(HttpClient httpClient)
         var response = await httpClient.PostAsJsonAsync("api/subscriptions", new { url });
         return response.IsSuccessStatusCode;
     }
+
+    public async Task<List<string>> GetSubscriptionsAsync()
+    {
+        var result = await httpClient.GetFromJsonAsync<List<string>>("api/subscriptions");
+        return result ?? [];
+    }
 }
