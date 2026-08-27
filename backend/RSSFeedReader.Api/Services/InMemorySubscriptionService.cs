@@ -8,20 +8,23 @@ public class InMemorySubscriptionService : ISubscriptionService
     private readonly List<Subscription> _subscriptions = new();
     private readonly object _lock = new();
 
-    public Subscription? Add(string url)
+    public Subscription Add(string url)
     {
-        if (string.IsNullOrWhiteSpace(url))
-        {
-            return null;
-        }
-
-        var subscription = new Subscription(url);
+        var subscription = new Subscription(Guid.NewGuid(), url);
         lock (_lock)
         {
             _subscriptions.Add(subscription);
         }
 
         return subscription;
+    }
+
+    public bool Remove(Guid id)
+    {
+        lock (_lock)
+        {
+            return _subscriptions.RemoveAll(s => s.Id == id) > 0;
+        }
     }
 
     public IReadOnlyList<Subscription> GetAll()

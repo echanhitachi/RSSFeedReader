@@ -17,6 +17,8 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddSingleton<ISubscriptionService, InMemorySubscriptionService>();
+builder.Services.AddHttpClient(nameof(FeedValidationService));
+builder.Services.AddSingleton<IFeedValidationService, FeedValidationService>();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -33,18 +35,29 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors(FrontendCorsPolicy);
 
-app.MapPost("/api/subscriptions", (AddSubscriptionRequest request, ISubscriptionService subscriptions) =>
+app.MapPost("/api/subscriptions", async (AddSubscriptionRequest request, ISubscriptionService subscriptions, IFeedValidationService feedValidation) =>
 {
+    var validation = await feedValidation.ValidateAsync(request.Url);
+    if (!validation.IsValid)
+    {
+        return Results.BadRequest(new { error = validation.ErrorMessage });
+    }
+
     var subscription = subscriptions.Add(request.Url);
-    return subscription is null
-        ? Results.BadRequest(new { error = "url must not be empty" })
-        : Results.Created("/api/subscriptions", subscription);
+    return Results.Created("/api/subscriptions", subscription);
 })
 .WithName("AddSubscription");
 
 app.MapGet("/api/subscriptions", (ISubscriptionService subscriptions) =>
-    Results.Ok(subscriptions.GetAll().Select(s => s.Url)))
+    Results.Ok(subscriptions.GetAll()))
 .WithName("GetSubscriptions");
+
+app.MapDelete("/api/subscriptions/{id:guid}", (Guid id, ISubscriptionService subscriptions) =>
+{
+    subscriptions.Remove(id);
+    return Results.NoContent();
+})
+.WithName("RemoveSubscription");
 
 app.Run();
 

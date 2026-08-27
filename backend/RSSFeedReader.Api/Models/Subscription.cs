@@ -1,4 +1,4 @@
 namespace RSSFeedReader.Api.Models;
 
-// Per data-model.md: MVP subscription has only a raw, unvalidated URL string.
-public record Subscription(string Url);
+// Id enables removing a specific entry even when duplicate Urls exist (FR-007).
+public record Subscription(Guid Id, string Url);

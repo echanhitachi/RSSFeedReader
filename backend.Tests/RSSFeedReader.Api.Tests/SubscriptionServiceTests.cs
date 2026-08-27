@@ -12,33 +12,20 @@ public class SubscriptionServiceTests
 
         var result = service.Add("https://devblogs.microsoft.com/dotnet/feed/");
 
-        Assert.NotNull(result);
-        Assert.Equal("https://devblogs.microsoft.com/dotnet/feed/", result!.Url);
-    }
-
-    [Theory]
-    [InlineData("")]
-    [InlineData("   ")]
-    [InlineData(null)]
-    public void Add_WithBlankUrl_ReturnsNullAndDoesNotAdd(string? url)
-    {
-        var service = new InMemorySubscriptionService();
-
-        var result = service.Add(url!);
-
-        Assert.Null(result);
-        Assert.Empty(service.GetAll());
+        Assert.NotEqual(Guid.Empty, result.Id);
+        Assert.Equal("https://devblogs.microsoft.com/dotnet/feed/", result.Url);
     }
 
     [Fact]
-    public void Add_WithDuplicateUrl_AllowsBothEntries()
+    public void Add_WithDuplicateUrl_AllowsBothEntriesWithDistinctIds()
     {
         var service = new InMemorySubscriptionService();
 
-        service.Add("https://example.com/feed.xml");
-        service.Add("https://example.com/feed.xml");
+        var first = service.Add("https://example.com/feed.xml");
+        var second = service.Add("https://example.com/feed.xml");
 
         Assert.Equal(2, service.GetAll().Count);
+        Assert.NotEqual(first.Id, second.Id);
     }
 
     [Fact]
@@ -62,5 +49,30 @@ public class SubscriptionServiceTests
         Assert.Equal(2, result.Count);
         Assert.Equal("https://example.com/first.xml", result[0].Url);
         Assert.Equal("https://example.com/second.xml", result[1].Url);
+    }
+
+    [Fact]
+    public void Remove_WithMatchingId_RemovesOnlyThatEntry()
+    {
+        var service = new InMemorySubscriptionService();
+        var first = service.Add("https://example.com/feed.xml");
+        var second = service.Add("https://example.com/feed.xml");
+
+        var removed = service.Remove(first.Id);
+
+        Assert.True(removed);
+        var remaining = service.GetAll();
+        Assert.Single(remaining);
+        Assert.Equal(second.Id, remaining[0].Id);
+    }
+
+    [Fact]
+    public void Remove_WithNonExistentId_ReturnsFalseWithoutThrowing()
+    {
+        var service = new InMemorySubscriptionService();
+
+        var removed = service.Remove(Guid.NewGuid());
+
+        Assert.False(removed);
     }
 }

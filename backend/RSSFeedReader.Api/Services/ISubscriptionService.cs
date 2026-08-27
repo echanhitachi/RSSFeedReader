@@ -4,8 +4,11 @@ namespace RSSFeedReader.Api.Services;
 
 public interface ISubscriptionService
 {
-    // Returns null when url is empty/whitespace (rejected per FR-008); duplicates are allowed (FR-007).
-    Subscription? Add(string url);
+    // Callers must pass an already-validated (non-empty, feed-verified) url; validation lives in IFeedValidationService.
+    Subscription Add(string url);
+
+    // Returns false when id does not exist; callers MUST treat this as a no-op, not an error (FR-010).
+    bool Remove(Guid id);
 
     IReadOnlyList<Subscription> GetAll();
 }
