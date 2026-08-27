@@ -23,12 +23,12 @@ description: "Task list template for feature implementation"
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create backend Web API project at `backend/RSSFeedReader.Api/` (ASP.NET Core Minimal API, .NET 8)
-- [ ] T002 Create frontend Blazor WebAssembly project at `frontend/RSSFeedReader.UI/`
-- [ ] T003 Create backend test project at `backend.Tests/RSSFeedReader.Api.Tests/` referencing xUnit and the API project
-- [ ] T004 Remove template demo pages `Home.razor`, `Counter.razor`, `Weather.razor` from `frontend/RSSFeedReader.UI/Pages/`
-- [ ] T005 Remove links to deleted demo pages and update root nav label in `frontend/RSSFeedReader.UI/Layout/NavMenu.razor`
-- [ ] T006 Configure coordinated ports and API base URL: `backend/RSSFeedReader.Api/Properties/launchSettings.json`, `frontend/RSSFeedReader.UI/Properties/launchSettings.json`, and `frontend/RSSFeedReader.UI/wwwroot/appsettings.json` (`ApiBaseUrl`)
+- [X] T001 Create backend Web API project at `backend/RSSFeedReader.Api/` (ASP.NET Core Minimal API, .NET 10 — only .NET 10 SDK/runtime available locally, see plan.md deviation note)
+- [X] T002 Create frontend Blazor WebAssembly project at `frontend/RSSFeedReader.UI/`
+- [X] T003 Create backend test project at `backend.Tests/RSSFeedReader.Api.Tests/` referencing xUnit and the API project
+- [X] T004 Remove template demo pages `Home.razor`, `Counter.razor`, `Weather.razor` from `frontend/RSSFeedReader.UI/Pages/`
+- [X] T005 Remove links to deleted demo pages and update root nav label in `frontend/RSSFeedReader.UI/Layout/NavMenu.razor`
+- [X] T006 Configure coordinated ports and API base URL: `backend/RSSFeedReader.Api/Properties/launchSettings.json`, `frontend/RSSFeedReader.UI/Properties/launchSettings.json`, and `frontend/RSSFeedReader.UI/wwwroot/appsettings.json` (`ApiBaseUrl`)
 
 **Checkpoint**: Both projects build and run; frontend shows an empty shell with no ambiguous-route errors.
 
@@ -36,11 +36,11 @@ description: "Task list template for feature implementation"
 
 **Purpose**: Core model and service required by both user stories — MUST complete before any user story work
 
-- [ ] T007 [P] Create `Subscription` model in `backend/RSSFeedReader.Api/Models/Subscription.cs` (per data-model.md: single `Url` string field)
-- [ ] T008 [P] Create `ISubscriptionService` interface in `backend/RSSFeedReader.Api/Services/ISubscriptionService.cs` with `Add(string url)` and `GetAll()` members
-- [ ] T009 Implement `InMemorySubscriptionService` in `backend/RSSFeedReader.Api/Services/InMemorySubscriptionService.cs`: thread-safe in-memory store, `Add` rejects empty/whitespace input (FR-008), allows duplicates (FR-007), `GetAll` returns insertion order
-- [ ] T010 Register `InMemorySubscriptionService` as a singleton and configure a named CORS policy allowing only the frontend origin(s) from T006 in `backend/RSSFeedReader.Api/Program.cs`
-- [ ] T011 [P] Create `SubscriptionApiClient` skeleton in `frontend/RSSFeedReader.UI/Services/SubscriptionApiClient.cs` reading `ApiBaseUrl` from configuration (per TechStack.md configuration pattern)
+- [X] T007 [P] Create `Subscription` model in `backend/RSSFeedReader.Api/Models/Subscription.cs` (per data-model.md: single `Url` string field)
+- [X] T008 [P] Create `ISubscriptionService` interface in `backend/RSSFeedReader.Api/Services/ISubscriptionService.cs` with `Add(string url)` and `GetAll()` members
+- [X] T009 Implement `InMemorySubscriptionService` in `backend/RSSFeedReader.Api/Services/InMemorySubscriptionService.cs`: thread-safe in-memory store, `Add` rejects empty/whitespace input (FR-008), allows duplicates (FR-007), `GetAll` returns insertion order
+- [X] T010 Register `InMemorySubscriptionService` as a singleton and configure a named CORS policy allowing only the frontend origin(s) from T006 in `backend/RSSFeedReader.Api/Program.cs`
+- [X] T011 [P] Create `SubscriptionApiClient` skeleton in `frontend/RSSFeedReader.UI/Services/SubscriptionApiClient.cs` reading `ApiBaseUrl` from configuration (per TechStack.md configuration pattern)
 
 **Checkpoint**: Backend has a working, tested-in-isolation service; frontend has an HTTP client shell ready to call endpoints. No endpoints exist yet.
 
@@ -50,11 +50,11 @@ description: "Task list template for feature implementation"
 
 **Independent Test**: Enter a feed URL and submit it, then confirm the app accepts the input and reports it was added.
 
-- [ ] T012 [P] [US1] Write unit tests for `InMemorySubscriptionService.Add` in `backend.Tests/RSSFeedReader.Api.Tests/SubscriptionServiceTests.cs` (accepts non-empty URL, rejects blank/whitespace-only input per FR-008, allows duplicate URLs per FR-007)
-- [ ] T013 [US1] Implement `POST /api/subscriptions` endpoint in `backend/RSSFeedReader.Api/Program.cs` per contracts/subscriptions-api.md (201 on success, 400 on empty `url`)
-- [ ] T014 [US1] Implement `AddSubscriptionAsync` in `frontend/RSSFeedReader.UI/Services/SubscriptionApiClient.cs` to call the POST endpoint
-- [ ] T015 [US1] Create `Subscriptions.razor` page at `@page "/"` in `frontend/RSSFeedReader.UI/Pages/Subscriptions.razor` with a URL input field and add button
-- [ ] T016 [US1] Wire the add button in `Subscriptions.razor` to `AddSubscriptionAsync`, ignore submission when input is blank (client-side guard for FR-008), and update the displayed list immediately on success (FR-003)
+- [X] T012 [P] [US1] Write unit tests for `InMemorySubscriptionService.Add` in `backend.Tests/RSSFeedReader.Api.Tests/SubscriptionServiceTests.cs` (accepts non-empty URL, rejects blank/whitespace-only input per FR-008, allows duplicate URLs per FR-007)
+- [X] T013 [US1] Implement `POST /api/subscriptions` endpoint in `backend/RSSFeedReader.Api/Program.cs` per contracts/subscriptions-api.md (201 on success, 400 on empty `url`)
+- [X] T014 [US1] Implement `AddSubscriptionAsync` in `frontend/RSSFeedReader.UI/Services/SubscriptionApiClient.cs` to call the POST endpoint
+- [X] T015 [US1] Create `Subscriptions.razor` page at `@page "/"` in `frontend/RSSFeedReader.UI/Pages/Subscriptions.razor` with a URL input field and add button
+- [X] T016 [US1] Wire the add button in `Subscriptions.razor` to `AddSubscriptionAsync`, ignore submission when input is blank (client-side guard for FR-008), and update the displayed list immediately on success (FR-003)
 
 **Checkpoint**: A user can add subscriptions and see them appear immediately. User Story 1 is independently functional.
 

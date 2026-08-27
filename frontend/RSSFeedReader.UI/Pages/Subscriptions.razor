@@ -1,0 +1,50 @@
+@page "/"
+@using RSSFeedReader.UI.Services
+@inject SubscriptionApiClient SubscriptionApiClient
+
+<PageTitle>Subscriptions</PageTitle>
+
+<h1>Subscriptions</h1>
+
+<div class="input-group mb-3">
+    <input @bind="_newUrl" @bind:event="oninput" class="form-control" placeholder="Enter a feed URL" />
+    <button class="btn btn-primary" @onclick="AddSubscriptionAsync">Add</button>
+</div>
+
+@if (!string.IsNullOrEmpty(_statusMessage))
+{
+    <p>@_statusMessage</p>
+}
+
+<ul>
+    @foreach (var url in _subscriptions)
+    {
+        <li>@url</li>
+    }
+</ul>
+
+@code {
+    private string _newUrl = string.Empty;
+    private string? _statusMessage;
+    private readonly List<string> _subscriptions = new();
+
+    private async Task AddSubscriptionAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_newUrl))
+        {
+            return;
+        }
+
+        var success = await SubscriptionApiClient.AddSubscriptionAsync(_newUrl);
+        if (success)
+        {
+            _subscriptions.Add(_newUrl);
+            _statusMessage = $"Added \"{_newUrl}\".";
+            _newUrl = string.Empty;
+        }
+        else
+        {
+            _statusMessage = "Failed to add subscription.";
+        }
+    }
+}

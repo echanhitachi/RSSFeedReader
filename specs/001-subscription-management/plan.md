@@ -18,7 +18,8 @@ tech stack.
 
 ## Technical Context
 
-**Language/Version**: C# / .NET 8 (ASP.NET Core Web API + Blazor WebAssembly)
+**Language/Version**: C# / .NET 10 (ASP.NET Core Web API + Blazor WebAssembly)
+— updated from the originally planned .NET 8 because only the .NET 10 SDK/runtime is installed in the local dev environment.
 
 **Primary Dependencies**: ASP.NET Core Minimal API (backend), Blazor
 WebAssembly + `HttpClient` (frontend). No feed-parsing or persistence
