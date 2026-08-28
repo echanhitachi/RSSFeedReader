@@ -19,6 +19,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddSingleton<ISubscriptionService, InMemorySubscriptionService>();
 builder.Services.AddHttpClient(nameof(FeedValidationService));
 builder.Services.AddSingleton<IFeedValidationService, FeedValidationService>();
+builder.Services.AddHttpClient(nameof(FeedRefreshService));
+builder.Services.AddSingleton<IFeedRefreshService, FeedRefreshService>();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -58,6 +60,21 @@ app.MapDelete("/api/subscriptions/{id:guid}", (Guid id, ISubscriptionService sub
     return Results.NoContent();
 })
 .WithName("RemoveSubscription");
+
+app.MapPost("/api/subscriptions/{id:guid}/refresh", async (Guid id, ISubscriptionService subscriptions, IFeedRefreshService feedRefresh) =>
+{
+    var subscription = subscriptions.GetAll().FirstOrDefault(s => s.Id == id);
+    if (subscription is null)
+    {
+        return Results.NotFound(new { error = "subscription not found" });
+    }
+
+    var result = await feedRefresh.RefreshAsync(subscription.Url);
+    return result.Success
+        ? Results.Ok(new { items = result.Items })
+        : Results.BadRequest(new { error = result.ErrorMessage });
+})
+.WithName("RefreshSubscription");
 
 app.Run();
 

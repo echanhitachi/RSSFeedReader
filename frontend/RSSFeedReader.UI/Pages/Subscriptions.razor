@@ -21,9 +21,29 @@
 <ul>
     @foreach (var subscription in _subscriptions)
     {
-        <li>
+        var state = GetRowState(subscription.Id);
+        <li class="mb-2">
             @subscription.Url
+            <button class="btn btn-sm btn-outline-secondary ms-2" disabled="@(state.IsLoading)" @onclick="() => RefreshSubscriptionAsync(subscription.Id)">
+                @(state.IsLoading ? "Refreshing..." : "Refresh")
+            </button>
             <button class="btn btn-sm btn-outline-danger ms-2" @onclick="() => RemoveSubscriptionAsync(subscription.Id)">Remove</button>
+
+            @if (state.ErrorMessage is not null)
+            {
+                <p class="text-danger mb-0">@state.ErrorMessage</p>
+            }
+            else if (state.Items is not null)
+            {
+                <ul>
+                    @foreach (var item in state.Items)
+                    {
+                        <li>
+                            <a href="@item.Link">@(string.IsNullOrEmpty(item.Title) ? "(no title)" : item.Title)</a>
+                        </li>
+                    }
+                </ul>
+            }
         </li>
     }
 </ul>
@@ -33,6 +53,25 @@
     private string? _statusMessage;
     private bool _isValidating;
     private List<Subscription> _subscriptions = new();
+    private readonly Dictionary<Guid, RowState> _rowStates = new();
+
+    private sealed class RowState
+    {
+        public bool IsLoading { get; set; }
+        public List<FeedItem>? Items { get; set; }
+        public string? ErrorMessage { get; set; }
+    }
+
+    private RowState GetRowState(Guid id)
+    {
+        if (!_rowStates.TryGetValue(id, out var state))
+        {
+            state = new RowState();
+            _rowStates[id] = state;
+        }
+
+        return state;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -72,5 +111,33 @@
     {
         await SubscriptionApiClient.RemoveSubscriptionAsync(id);
         _subscriptions.RemoveAll(s => s.Id == id);
+        _rowStates.Remove(id);
+    }
+
+    private async Task RefreshSubscriptionAsync(Guid id)
+    {
+        var state = GetRowState(id);
+        state.IsLoading = true;
+        state.ErrorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            var result = await SubscriptionApiClient.RefreshSubscriptionAsync(id);
+            if (result.Success)
+            {
+                state.Items = result.Items;
+                state.ErrorMessage = null;
+            }
+            else
+            {
+                state.ErrorMessage = result.ErrorMessage;
+                state.Items = null;
+            }
+        }
+        finally
+        {
+            state.IsLoading = false;
+        }
     }
 }
